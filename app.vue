@@ -1,17 +1,3 @@
-<template>
-  <div>
-    <ClientOnly>
-      <div class="grid grid-cols-board">
-        <canvas :id="canvas" value="2" class="border-solid border-2"></canvas>
-        <div id="test" class="flex flex-col justify-between">
-            <RightColumn></RightColumn>
-            <button @click="play()" class="fs-16 px-15 py-30 cursor-pointer">Play</button>
-        </div>
-      </div>
-    </ClientOnly>
-  </div>
-</template>
-
 <script setup>
   import { ref } from 'vue'
   useHead({
@@ -25,14 +11,12 @@
   const COLS = 10;
   const ROWS = 20;
   const BLOCK_SIZE = 30;
+
   const canvas = ref(null);
   
 
   onMounted(() => {
-    const canvas = ref(document.createElement('canvas'));
-    console.log(canvas.value);
-
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.value.getContext('2d');
 
     // Calculate size of canvas from constants.
     ctx.canvas.width = COLS * BLOCK_SIZE;
@@ -43,17 +27,42 @@
   })
 
   const grid = ref();
-  const reset = () => {
-    grid = getEmptyBoard();
+  // const reset = () => {
+  //   grid.value = getEmptyBoard();
+  // }
+
+  // const getEmptyBoard = () => {
+  //   return Array.from(
+  //     {length: ROWS}, () => Array(COLS).fill(0)
+  //   );
+  // }
+
+ class Board {
+     reset = () => {
+      this.grid = this.getEmptyBoard();
+    }
+
+     getEmptyBoard = () => {
+      return Array.from(
+        {length: ROWS}, () => Array(COLS).fill(0)
+      );
+    }
   }
 
-  const getEmptyBoard = () => {
-    return Array.from(
-      {length: ROWS}, () => Array(COLS).fill(0)
-    );
-  }
+  const board = new Board();
   const play = () => {
-    reset();  
+    board.reset();  
     console.table(board.grid);  
   }
 </script>
+<template>
+  <div>
+      <div class="grid grid-cols-board">
+        <canvas ref="canvas" id="canvas" class="border-solid border-2"></canvas>
+        <div id="test" class="flex flex-col justify-between">
+            <RightColumn></RightColumn>
+            <button @click="play()" class="fs-16 px-15 py-30 cursor-pointer">Play</button>
+        </div>
+      </div>
+  </div>
+</template>
